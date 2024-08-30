@@ -9,7 +9,7 @@ import { RFPListProvider } from './components/rfp/RFPListContext';
 const App = () => {
   const [activePage, setActivePage] = useState('Main');
 
-  const pages = ['Main', 'RFP Upload', 'Employee Matching'];
+  const pages = ['Main', 'RFP Upload', 'Resume Builder'];
 
   const renderActivePage = () => {
     switch (activePage) {
@@ -17,7 +17,7 @@ const App = () => {
         return <MainPage setActivePage={setActivePage} />;
       case 'RFP Upload':
         return <RFPUploadPage />;
-      case 'Employee Matching':
+      case 'Resume Builder':
           return <EmployeeMatchingPage />;
       default:
         return null;
