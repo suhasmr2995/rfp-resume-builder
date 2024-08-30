@@ -145,7 +145,7 @@ def get_resume():
     resume_name = request.args.get('resumeName')
     print(f"Input: {resume_name}")
     
-    if resume_name.startswith('enhanced/'):
+    if resume_name.startswith('Tailored/'):
         # For enhanced resumes, we already have the full blob name
         blob_name = resume_name.replace('.docx', '.pdf')
         
@@ -172,7 +172,7 @@ def get_resume():
 def download_resume():
     resume_name = request.args.get('resumeName')
 
-    if resume_name.startswith('enhanced/'):
+    if resume_name.startswith('Tailored/'):
         # For enhanced resumes, get the PDF
         blob_name = resume_name
         content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'

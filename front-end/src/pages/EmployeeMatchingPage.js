@@ -150,7 +150,7 @@ const EmployeeMatchingPage = () => {
         <div className="flex justify-center items-center mb-2">
           <Users className="text-blue-400 mr-2" size={36} />
           <h1 className="text-4xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-            Employee Matching
+          Resume Builder
           </h1>
         </div>
         <p className="text-lg font-semibold mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400">
