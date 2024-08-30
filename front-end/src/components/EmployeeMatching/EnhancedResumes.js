@@ -9,7 +9,7 @@ const EnhancedResumes = ({ enhancedResults, onResumeClick, selectedEnhancedResum
   return (
     <div className="mt-6 bg-gray-800 bg-opacity-50 rounded-xl p-6 shadow-lg">
       <h3 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
-        Tailored Resumes
+        Enhanced Resumes
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {enhancedResults.map((result) => (
@@ -28,7 +28,7 @@ const EnhancedResumes = ({ enhancedResults, onResumeClick, selectedEnhancedResum
                 onResumeClick(result.enhancedResumeName);
               }}
             >
-              {result.name} (Tailored)
+              {result.name} (Enhanced)
               <ExternalLink className="ml-2 h-4 w-4" />
             </a>
           </div>

@@ -14,7 +14,7 @@ const ActionButtons = ({ selectedRows, selectedEnhancedResumes, onEnhanceResumes
         }`}
       >
         <Zap className="mr-2" size={20} />
-       Tailor Selected Resumes
+        Enhance Selected Resumes
       </button>
       <button
         onClick={onDownloadResumes}

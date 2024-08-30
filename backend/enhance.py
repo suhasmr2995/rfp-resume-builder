@@ -38,7 +38,7 @@ load_dotenv()
 # Azure Blob Storage
 connect_str = os.getenv("STORAGE_ACCOUNT_CONNECTION_STRING")
 storage_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
-container_name = "resume-data"
+container_name = "resumes"
 
 #Doc intelligence
 form_recognizer_endpoint = os.getenv("FORM_RECOGNIZER_ENDPOINT")
@@ -235,7 +235,7 @@ def enhance_resume(resume_name, rfp_name):
 
     # Prepare file names
     resume_name_without_ext = os.path.splitext(resume_name)[0]
-    enhanced_name = f"{resume_name_without_ext}_tailored"
+    enhanced_name = f"{resume_name_without_ext}_enhanced"
     enhanced_docx_name = f"{enhanced_name}.docx"
     enhanced_pdf_name = f"{enhanced_name}.pdf"
 
@@ -247,7 +247,7 @@ def enhance_resume(resume_name, rfp_name):
 
             # Add a 1-second delay
             time.sleep(1)
-            enhanced_folder = "Tailored/"
+            enhanced_folder = "enhanced/"
             # Convert DOCX to PDF
             try:
                 convert(temp_docx_path, temp_pdf_path)
