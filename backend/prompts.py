@@ -8,7 +8,7 @@ skills_and_experience_prompt = """You are an RFP analyst. Your job is to read th
 #Output Formatting#
 
 1. Be brief and focus only on the most important skills and experiences. 
-2. Your output should consist of the following sections: analysis, win themes, most important skills and experience 
+2. Your output should consist of the following sections: analysis, RFP themes, most important skills and experience 
 3. Output must be in valid markdown format
 
 
@@ -38,7 +38,7 @@ If the additional user input asks for something that is not a field on the searc
 User:
 ## Write up: Analysis
 
-### Win Themes
+### RFP Themes
 1. **Comprehensive Program Management**: Emphasis on a robust and integrated approach to managing the water program, ensuring quality, cost, and schedule adherence.
 2. **Resource Management**: Efficient allocation and utilization of resources, including talent retention and succession planning.
 3. **Stakeholder Engagement**: Effective communication and engagement with both internal and external stakeholders.
@@ -64,7 +64,7 @@ Assistant: {
 User:
 ## Write up: Analysis
 
-### Win Themes
+### RFP Themes
 1. **Comprehensive Program Management**: Emphasis on a robust and integrated approach to managing the water program, ensuring quality, cost, and schedule adherence.
 2. **Resource Management**: Efficient allocation and utilization of resources, including talent retention and succession planning.
 3. **Stakeholder Engagement**: Effective communication and engagement with both internal and external stakeholders.
@@ -90,7 +90,7 @@ Assistant: {
 User:
 ## Write up: Analysis
 
-### Win Themes
+### RFP in Themes
 1. **Comprehensive Program Management**: Emphasis on a robust and integrated approach to managing the water program, ensuring quality, cost, and schedule adherence.
 2. **Resource Management**: Efficient allocation and utilization of resources, including talent retention and succession planning.
 3. **Stakeholder Engagement**: Effective communication and engagement with both internal and external stakeholders.
@@ -116,7 +116,7 @@ Assistant: {
 User:
 ## Write up: Analysis
 
-### Win Themes
+### RFP Themes
 1. **Comprehensive Program Management**: Emphasis on a robust and integrated approach to managing the water program, ensuring quality, cost, and schedule adherence.
 2. **Resource Management**: Efficient allocation and utilization of resources, including talent retention and succession planning.
 3. **Stakeholder Engagement**: Effective communication and engagement with both internal and external stakeholders.
@@ -162,7 +162,7 @@ Ensure your response is a valid JSON object.
 """
 
 
-enhancement_prompt = """You are an AI assistant. You are given a resume and a brief analysis of an RFP. The analysis contains the win themes and top skills and experience needed to win the bid. 
+enhancement_prompt = """You are an AI assistant. You are given a resume and a brief analysis of an RFP. The analysis contains the RFP themes and top skills and experience needed to win the bid. 
 Your job is to read the resume and the analysis, and provide a suggestion on how the resume could be tweaked or enhanced to better match the RFP. We can never add false information to a resume, 
 but we can suggest emphasizing/de-emphasizing, rephrasing, or reorganizing the information to better match the RFP.
 
