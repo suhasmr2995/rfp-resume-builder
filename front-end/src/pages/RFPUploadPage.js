@@ -50,17 +50,17 @@ const RFPUploadPage = () => {
   };
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto px-4 py-6 overflow-hidden">
+    <div className="flex flex-col h-full max-w-7xl mx-auto px-4 py-6 overflow-hidden">
       <div className="flex flex-1 gap-4 overflow-hidden">
         <div className="flex-1 flex flex-col overflow-hidden pr-4">
           <div className="flex-1">
-            <ExperienceSkillsetProfile 
-              rfp={selectedRFP} 
-              uploadStream={uploadStream} 
+            <ExperienceSkillsetProfile
+              rfp={selectedRFP}
+              uploadStream={uploadStream}
               isUploading={isUploading}
             />
           </div>
-          <div className="bg-gray-800 bg-opacity-50 rounded-xl p-6 shadow-lg">
+          <div className="bg-gray-800 bg-opacity-50 rounded-xl p-6 shadow-lg border border-gray-700">
             <h2 className="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
               Upload an RFP
             </h2>
@@ -76,9 +76,7 @@ const RFPUploadPage = () => {
               />
               <label
                 htmlFor="file-upload"
-                className={`bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full cursor-pointer transition duration-300 text-sm ${
-                  isUploading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`bg-blue-600 hover:bg-green text-white font-bold py-2 px-4 rounded-full cursor-pointer transition duration-300 text-sm ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isUploading ? 'Uploading...' : 'Upload'}
               </label>

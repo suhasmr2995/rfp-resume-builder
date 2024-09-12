@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 import json
 import hashlib
 from typing import Any
-#import lib for pypdf2
+import PyPDF2
 
 
 from azure.core.credentials import AzureKeyCredential  
@@ -48,7 +48,7 @@ import requests
 load_dotenv()
 
 connect_str = os.getenv("STORAGE_ACCOUNT_CONNECTION_STRING")
-container_name = "resumes"
+container_name = "resume-data"
 storage_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
 
 form_recognizer_endpoint = os.getenv("FORM_RECOGNIZER_ENDPOINT")
@@ -163,7 +163,7 @@ Assistant: {'experienceLevel': '5', 'jobTitle': 'General Contractor', 'skills_an
 
 """
 
-def generate_embeddings(text, model="text-embedding-ada-002"): # model = "deployment_name"
+def generate_embeddings(text, model="embedding-ada"): # model = "deployment_name"
     return aoai_client.embeddings.create(input = [text], model=model).data[0].embedding
 
 def get_creation_date(pdf_file):
@@ -239,11 +239,15 @@ def create_index():
     print("Index has been created")
 
 def read_pdf(input_file):
-    blob_url = f"https://{storage_account_name}.blob.core.windows.net/{container_name}/{input_file}"
-    analyze_request = {
-        "urlSource": blob_url
-    }
-    poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", analyze_request=analyze_request)
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    inp_blob_file_content=blob_service_client.get_container_client(container_name).download_blob(input_file).readall()
+    # Start the analysis
+    poller = document_intelligence_client.begin_analyze_document(
+        model_id="prebuilt-layout",
+        analyze_request = {
+                    "base64Source": inp_blob_file_content  # Optional. Base64 encoding of the document to analyze.  Either urlSource or base64Source must be specified.
+                }
+    )
     result: AnalyzeResult = poller.result()
     #print(result.content)
     
@@ -290,6 +294,9 @@ def populate_index():
     container_client = blob_service_client.get_container_client(container_name)
     
     stage_blobs = list_blobs_in_folder(container_client, "source/")
+
+    #subsetting 100 resumes.
+    stage_blobs=stage_blobs[:100]
     print(f"Found {len(stage_blobs)} blobs in the 'source' folder")
     
     for blob in stage_blobs:

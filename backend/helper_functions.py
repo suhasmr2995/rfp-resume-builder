@@ -8,7 +8,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 # Azure Cosmos DB
-
+load_dotenv()
 
 
 

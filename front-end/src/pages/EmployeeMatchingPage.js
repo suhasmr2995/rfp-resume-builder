@@ -150,12 +150,12 @@ const EmployeeMatchingPage = () => {
         <div className="flex justify-center items-center mb-2">
           <Users className="text-blue-400 mr-2" size={36} />
           <h1 className="text-4xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-          Resume Builder
+            Resume Builder
           </h1>
         </div>
-        <p className="text-lg font-semibold mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400">
+        <span className="px-3 py-1 inline-flex text-sm leading-5 font-medium rounded-full bg-gradient-to-r from-blue-600 to-green text-white">
           Find the right people for your proposal
-        </p>
+        </span>
       </div>
       <div className="flex flex-1 px-4 pb-16">
         <div className="w-64 pr-4 flex flex-col space-y-4">

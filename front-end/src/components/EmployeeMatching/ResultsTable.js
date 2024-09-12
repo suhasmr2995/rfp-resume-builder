@@ -17,15 +17,15 @@ const ResultsTable = ({ isLoading, matchingResults, selectedRows, setSelectedRow
     }));
   };
 
-  return (
-    <div className="bg-gray-800 bg-opacity-50 rounded-xl p-6 shadow-lg flex-grow overflow-auto mb-4">
+  return ( 
+    <div className="bg-gray-800 bg-opacity-50 rounded-xl p-6 shadow-lg flex-grow overflow-auto mb-4 border border-gray-700">
       <h2 className="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
         Results
       </h2>
       {isLoading ? (
         <p className="text-gray-400 text-lg">Searching...</p>
       ) : matchingResults.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-gray-700">
           <table className="min-w-full divide-y divide-gray-700">
             <thead>
               <tr>
@@ -64,7 +64,7 @@ const ResultsTable = ({ isLoading, matchingResults, selectedRows, setSelectedRow
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-3 py-1 inline-flex text-sm leading-5 font-medium rounded-full bg-gradient-to-r from-blue-400 to-purple-500 text-white">
+                      <span className="px-3 py-1 inline-flex text-sm leading-5 font-medium rounded-full bg-gradient-to-r from-blue-600 to-green text-white">
                         {result.experienceLevel} years
                       </span>
                     </td>
