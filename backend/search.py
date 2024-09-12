@@ -200,7 +200,7 @@ def generate_explanation(content, skills_and_experience):
             "relevant_projects": 0
         }
 
-def generate_embeddings(text, model="text-embedding-ada-002"): # model = "deployment_name"
+def generate_embeddings(text, model="embedding-ada"): # model = "deployment_name"
     return aoai_client.embeddings.create(input = [text], model=model).data[0].embedding
 
 

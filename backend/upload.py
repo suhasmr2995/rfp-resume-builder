@@ -130,14 +130,19 @@ def write_to_cosmos(container, json):
         print(str(e))
 
 def read_pdf(input_file):
-    blob_url = f"https://{storage_account_name}.blob.core.windows.net/{container_name}/{input_file}"
-    analyze_request = {
-        "urlSource": blob_url
-    }
-    poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", analyze_request=analyze_request)
-    result: AnalyzeResult = poller.result()
-    print("Successfully read the PDF from blob storage and analyzed.")
-    return result
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    inp_blob_file_content=blob_service_client.get_container_client(container_name).download_blob(input_file).readall()
+    # Start the analysis
+    poller = document_intelligence_client.begin_analyze_document(
+        model_id="prebuilt-layout",
+        analyze_request = {
+                    "base64Source": inp_blob_file_content  # Optional. Base64 encoding of the document to analyze.  Either urlSource or base64Source must be specified.
+                }
+    )
+ 
+    # Get the result
+    return poller.result()
+
 
 
 
