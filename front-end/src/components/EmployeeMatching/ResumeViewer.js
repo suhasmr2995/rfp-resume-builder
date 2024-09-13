@@ -11,7 +11,7 @@ const ResumeViewer = ({ resumeName, isEnhanced, isWindowOpen, onClose }) => {
   return (
     <NewWindow onUnload={onClose}>
       <div>
-        <iframe src={pdfUrl} width="100%" height="600px" title="Resume Viewer"></iframe>
+        <iframe src={pdfUrl} width="100%" height="100%" style={{ border: 'none' }} title="Resume Viewer"></iframe>
       </div>
     </NewWindow>
   );

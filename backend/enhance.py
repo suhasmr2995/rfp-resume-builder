@@ -28,7 +28,7 @@ import os
 import contextlib
 import tempfile
 import time
-
+import pythoncom
 
 
 
@@ -245,21 +245,23 @@ def enhance_resume(resume_name, rfp_name):
             doc.save(temp_docx_path)
             print(f"Enhanced resume (DOCX) saved to temporary file: {temp_docx_path}")
 
-            # Add a 1-second delay
-            time.sleep(1)
+            # # Add a 1-second delay
+            # time.sleep(1)
             enhanced_folder = "Tailored/"
-            # Convert DOCX to PDF
-            try:
-                convert(temp_docx_path, temp_pdf_path)
-                print(f"Enhanced resume (PDF) converted to temporary file: {temp_pdf_path}")
-                # Upload the PDF file to blob storage
-                enhanced_pdf_blob_name = enhanced_folder + enhanced_pdf_name
-                enhanced_pdf_client = container_client.get_blob_client(enhanced_pdf_blob_name)
-                with open(temp_pdf_path, "rb") as pdf_file:
-                    enhanced_pdf_client.upload_blob(pdf_file, overwrite=True)
-                print(f"Enhanced resume (PDF) uploaded as {enhanced_pdf_blob_name}")
-            except Exception as e:
-                print(f"Failed to convert DOCX to PDF: {str(e)}")
+            # # Convert DOCX to PDF
+            # try:
+            #     pythoncom.CoInitialize()
+            #     convert(temp_docx_path, temp_pdf_path)
+            #     print(f"Enhanced resume (PDF) converted to temporary file: {temp_pdf_path}")
+            #     # Upload the PDF file to blob storage
+            #     enhanced_pdf_blob_name = enhanced_folder + enhanced_pdf_name
+            #     enhanced_pdf_client = container_client.get_blob_client(enhanced_pdf_blob_name)
+            #     with open(temp_pdf_path, "rb") as pdf_file:
+            #         enhanced_pdf_client.upload_blob(pdf_file, overwrite=True)
+            #     print(f"Enhanced resume (PDF) uploaded as {enhanced_pdf_blob_name}")
+            #     pythoncom.CoUninitialize()
+            # except Exception as e:
+            #     print(f"Failed to convert DOCX to PDF: {str(e)}")
     
 
             # Upload the DOCX file to blob storage

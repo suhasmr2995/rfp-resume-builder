@@ -10,6 +10,9 @@ from helper_functions import get_rfp_analysis_from_db
 from enhance import enhance_resume
 from upload import process_rfp
 from search import search
+import mammoth
+import io
+from pydocx import PyDocX
 
 load_dotenv()
 
@@ -140,33 +143,72 @@ def enhance():
         print(f"Error enhancing resume: {str(e)}")
         return jsonify({"error": "An error occurred while enhancing the resume"}), 500
 
+# @app.route('/resume', methods=['GET'])
+# def get_resume():
+#     resume_name = request.args.get('resumeName')
+#     print(f"Input: {resume_name}")
+    
+    # if resume_name.startswith('Tailored/'):
+    #     # For enhanced resumes, we already have the full blob name
+    #     blob_name = resume_name.replace('.docx', '.pdf')
+        
+    # else:
+    #     # For regular resumes, construct the blob name
+    #     blob_name = resume_name.replace('.docx', '.pdf')
+    #     blob_name = f'pdf/{blob_name}'
+
+    # print(f"Blob name: {blob_name}")
+    # blob_client = blob_resume_container_client.get_blob_client(blob_name)
+
+    #try:
+    #    download_stream = blob_client.download_blob()
+    #    file_content = download_stream.readall()
+    #
+    #    response = make_response(file_content)
+    #    response.headers['Content-Type'] = 'application/pdf'
+    #   return response
+    #except Exception as e:
+    #    print(f"Error downloading file: {str(e)}")
+    #    return make_response('Failed to download file', 500)
+
+
 @app.route('/resume', methods=['GET'])
 def get_resume():
     resume_name = request.args.get('resumeName')
     print(f"Input: {resume_name}")
     
-    if resume_name.startswith('Tailored/'):
-        # For enhanced resumes, we already have the full blob name
-        blob_name = resume_name.replace('.docx', '.pdf')
-        
+    # Get blob client (assuming blob_resume_container_client is initialized elsewhere)
+    if "tailored" in resume_name.lower():
+        blob_client = blob_resume_container_client.get_blob_client(resume_name)
     else:
-        # For regular resumes, construct the blob name
-        blob_name = resume_name.replace('.docx', '.pdf')
-        blob_name = f'pdf/{blob_name}'
-
-    print(f"Blob name: {blob_name}")
-    blob_client = blob_resume_container_client.get_blob_client(blob_name)
+        blob_client = blob_resume_container_client.get_blob_client("processed/" + resume_name)
 
     try:
+        # Download the blob in binary mode
         download_stream = blob_client.download_blob()
         file_content = download_stream.readall()
-
-        response = make_response(file_content)
-        response.headers['Content-Type'] = 'application/pdf'
+        
+        # Convert the DOCX content to HTML using mammoth
+        with io.BytesIO(file_content) as docx_stream:
+            html_content = PyDocX.to_html(docx_stream)
+            #result=mammoth.convert_to_markdown(docx_stream)
+            #html_content = result.value  # The generated HTML content
+            
+        
+        # Return as an HTML response
+        response = make_response(html_content)
+        response.headers['Content-Type'] = 'text/html'
         return response
+
     except Exception as e:
-        print(f"Error downloading file: {str(e)}")
-        return make_response('Failed to download file', 500)
+        print(f"Error downloading or processing file: {str(e)}")
+        return make_response('Failed to download or process file', 500)
+
+
+
+        
+        
+
     
 @app.route('/download', methods=['GET'])
 def download_resume():
