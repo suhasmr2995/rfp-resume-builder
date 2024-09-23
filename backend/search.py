@@ -158,6 +158,7 @@ def search(rfp_name, user_input):
                     "jobTitle": result['jobTitle'],
                     "experienceLevel": result['experienceLevel'],
                     "relevantProjects": explanation_data['relevant_projects'],
+                    "location":result["location"],
                     "explanation": explanation_data['explanation']
                 })
             except Exception as exc:
@@ -167,6 +168,7 @@ def search(rfp_name, user_input):
                     "jobTitle": result['jobTitle'],
                     "experienceLevel": result['experienceLevel'],
                     "relevantProjects": 0,
+                    "location":result["location"],
                     "explanation": "Unable to generate explanation."
                 })
 

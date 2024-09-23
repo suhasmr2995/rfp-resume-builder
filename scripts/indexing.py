@@ -44,6 +44,7 @@ from azure.core.credentials import AzureKeyCredential
 import tiktoken
 from dotenv import load_dotenv 
 import requests
+import pandas as pd
 
 load_dotenv()
 
@@ -106,8 +107,7 @@ resume_indexing_prompt = """You are an AI assistant. Your job is to read the inp
 and output certain info in valid JSON format. Here is what you should be extracting:
 
 1. experienceLevel - years of experience (an integer)
-2. jobTitle - the title of the job the resume is for
-3. skills_and_experience - a succinct list of 3-5 top skills and experiences.   
+2. skills_and_experience - a succinct list of 3-5 top skills and experiences.   
 
 
 #Examples#
@@ -159,7 +159,7 @@ Microsoft Office
 Google Suite
 
 
-Assistant: {'experienceLevel': '5', 'jobTitle': 'General Contractor', 'skills_and_experience': ['Cost reduction & elimination', 'Project estimation', 'Subcontractor management', 'Workforce planning & scheduling', 'Contract negotiation']}
+Assistant: {'experienceLevel': '5', 'skills_and_experience': ['Cost reduction & elimination', 'Project estimation', 'Subcontractor management', 'Workforce planning & scheduling', 'Contract negotiation']}
 
 """
 
@@ -215,9 +215,18 @@ def create_index():
         SearchableField(name="content", type=SearchFieldDataType.String),
         SearchableField(name="sourceFileName", type=SearchFieldDataType.String, filterable=True),
         SearchField(name="searchVector", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                    searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile")
+                    searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile"),
+        SearchableField(name="employee_first_name",searchable=True,type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="employee_last_name",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="location",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="employee_number",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="employee_Title",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="certifications",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="skills",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="job_family",type=SearchFieldDataType.String, filterable=True,facetable=True),
+        SearchableField(name="primary_practice",type=SearchFieldDataType.String, filterable=True,facetable=True)]
 
-    ]
+
 
     vector_search = VectorSearch(
     algorithms=[
@@ -290,57 +299,91 @@ def move_blob(source_container_client, destination_container_client, source_blob
 
 def populate_index():
     print("Populating index...")
+    
+    # Read the metadata Excel file into a DataFrame
+    metadata_df = pd.read_excel("scripts//EmailListBuilder_modified.xlsx")
+    
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     container_client = blob_service_client.get_container_client(container_name)
     
     stage_blobs = list_blobs_in_folder(container_client, "source/")
 
-    #subsetting 100 resumes.
-    stage_blobs=stage_blobs[:100]
+    # Subsetting to 100 resumes.
+    stage_blobs = stage_blobs[:100]
     print(f"Found {len(stage_blobs)} blobs in the 'source' folder")
     
     for blob in stage_blobs:
         print(f"Processing {blob.name}")
-        print(blob.name)
         
         try:
+            # Extract employee ID from the blob name (assuming the format is NAME_ID.extension)
+            blob_name_parts = os.path.basename(blob.name).split(' ')
+            employee_id = blob_name_parts[-1].split('.')[0]  # Adjust this depending on your naming convention
+            print(f"Extracted employee ID: {employee_id}")
+            
+            # Find the corresponding metadata row for this employee ID
+            metadata_row = metadata_df[metadata_df["EMPLOYEE_NUMBER"] == int(employee_id)].fillna("")
+            
+            #if metadata_row.empty:
+             #   print(f"No metadata found for employee ID: {employee_id}")
+             #   continue
+            
+            # Extract metadata columns (example: name, department, etc.)
+            employee_first_name = metadata_row["EMP_FNAME"].values[0]
+            employee_last_name = metadata_row["EMP_LNAME"].values[0]
+            location = metadata_row["LOCATION"].values[0]
+            employee_number = metadata_row["EMPLOYEE_NUMBER"].values[0].astype(str)
+            employee_Title = metadata_row["TITLE"].values[0]
+            certifications = metadata_row["CERTIFICATION"].values[0]
+            skills = metadata_row["SKILL"].values[0]
+            job_family = metadata_row["JOB_FAMILY"].values[0]
+            primary_practice = metadata_row["PRIMARY_PRACTICE"].values[0]
+            
+            # Read the full text of the resume
             full_text = read_pdf(blob.name)
             extraction_json = llm_extraction(full_text)
 
-            
+            # Extract relevant fields from LLM extraction
             experienceLevel = extraction_json["experienceLevel"]
-            jobTitle = extraction_json["jobTitle"]
+            #jobTitle = extraction_json["jobTitle"]
             skills_and_experience = extraction_json["skills_and_experience"]
             skills_and_experience_str = ", ".join(skills_and_experience)
             searchVector = generate_embeddings(skills_and_experience_str)
             current_date = datetime.now(timezone.utc).isoformat()
             document_id = generate_document_id(blob.name)
             fileName = os.path.basename(blob.name)
-            print(f"Extracted experience level: {experienceLevel}")
-            print(f"Extracted job title: {jobTitle}")
-            print(f"Extracted skills and experience: {skills_and_experience_str}")
-            print(f"Current date: {current_date}")
             
+            # Combine extracted fields and metadata into the document
             document = {
                 "id": document_id,
                 "date": current_date,
-                "jobTitle": jobTitle,
+                "jobTitle": employee_Title,
                 "experienceLevel": experienceLevel,
                 "content": full_text,
                 "sourceFileName": fileName,
-                "searchVector": searchVector
+                "searchVector": searchVector,
+                "employee_first_name":employee_first_name,
+                "employee_last_name":employee_last_name,
+                "location":location,
+                "employee_number":employee_number,
+                "certifications":certifications,
+                "skills":skills,
+                "job_family":job_family,
+                "primary_practice":primary_practice
             }
             
+            # Upload the document to the search index
             search_client.upload_documents(documents=[document])
             
             # Move the processed file to the 'processed' folder
-            destination_blob_name = blob.name.replace("source/", "processed/")
-            move_blob(container_client, container_client, blob.name, destination_blob_name)
+            #destination_blob_name = blob.name.replace("source/", "processed/")
+            #move_blob(container_client, container_client, blob.name, destination_blob_name)
             
             print(f"Successfully processed and moved {blob.name}")
         
         except Exception as e:
             print(f"Error processing {blob.name}: {str(e)}")
+
 
 def reset_processed_files():
     """Move all files from the 'processed' folder back to the 'source' folder."""
@@ -362,7 +405,7 @@ def reset_processed_files():
 
 if __name__ == "__main__":
 
-    reset_processed_files()
+    #reset_processed_files()
 
     create_index()
 

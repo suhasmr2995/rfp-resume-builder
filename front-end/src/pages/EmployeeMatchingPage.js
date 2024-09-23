@@ -39,8 +39,7 @@ const EmployeeMatchingPage = () => {
       const data = await response.json();
       if (response.ok) {
         setMatchingResults(data.results.map(result => ({
-          ...result,
-          location: `City ${Math.floor(Math.random() * 100)}`
+          ...result
         })));
       } else {
         alert(data.error || 'An error occurred during the search');
