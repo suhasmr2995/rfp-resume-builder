@@ -67,6 +67,7 @@ const EmployeeMatchingPage = () => {
 
     for (const resumeName of selectedRows) {
       try {
+        const search_query = matchingResults.find(x => x.name === resumeName)?.search_query ?? '';
         const response = await fetch('http://localhost:5000/enhance', {
           method: 'POST',
           headers: {
@@ -75,6 +76,7 @@ const EmployeeMatchingPage = () => {
           body: JSON.stringify({
             resumeName: resumeName,
             rfpName: selectedRFP,
+            search_query: search_query
           }),
         });
 

@@ -123,6 +123,7 @@ def enhance():
     data = request.json
     resume_name = data.get('resumeName')
     rfp_name = data.get('rfpName')
+    search_query = data.get('search_query')
     
     if not resume_name or not rfp_name:
         return jsonify({"error": "Missing resumeName or rfpName"}), 400
@@ -130,7 +131,7 @@ def enhance():
     try:
         # Call the enhance_resume function from enhance.py
         
-        enhanced_resume_name = enhance_resume(resume_name, rfp_name)
+        enhanced_resume_name = enhance_resume(resume_name, rfp_name, search_query)
         
         # Generate the URL for the enhanced resume
         enhanced_resume_url = f"{request.host_url}download?resumeName={enhanced_resume_name}"

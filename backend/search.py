@@ -159,7 +159,8 @@ def search(rfp_name, user_input):
                     "experienceLevel": result['experienceLevel'],
                     "relevantProjects": explanation_data['relevant_projects'],
                     "location":result["location"],
-                    "explanation": explanation_data['explanation']
+                    "explanation": explanation_data['explanation'],
+                    "search_query": search_query
                 })
             except Exception as exc:
                 print(f'Generating explanation for {result["sourceFileName"]} generated an exception: {exc}')
